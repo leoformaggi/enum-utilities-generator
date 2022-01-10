@@ -13,15 +13,15 @@ namespace EnumUtilitiesGenerator.Attributes
     [AttributeUsage(AttributeTargets.Enum, AllowMultiple = false, Inherited = false)]
     public sealed class GenerateHelperAttribute : Attribute
     {
-        public GenerateHelperAttribute(GenerateExtensionOption generationOption)
+        public GenerateHelperAttribute(GenerateHelperOption generationOption)
         {
             GenerationOption = generationOption;
         }
 
-        public GenerateExtensionOption GenerationOption { get; }
+        public GenerateHelperOption GenerationOption { get; }
     }
 
-    public enum GenerateExtensionOption
+    public enum GenerateHelperOption
     {
         IgnoreEnumWithoutDescription = 1,
         ThrowForEnumWithoutDescription = 2,

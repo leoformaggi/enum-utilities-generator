@@ -34,15 +34,15 @@ namespace EnumUtilitiesGenerator.Attributes
     [AttributeUsage(AttributeTargets.Enum, AllowMultiple = false, Inherited = false)]
     public sealed class GenerateHelperAttribute : Attribute
     {
-        public GenerateHelperAttribute(GenerateExtensionOption generationOption)
+        public GenerateHelperAttribute(GenerateHelperOption generationOption)
         {
             GenerationOption = generationOption;
         }
 
-        public GenerateExtensionOption GenerationOption { get; }
+        public GenerateHelperOption GenerationOption { get; }
     }
 
-    public enum GenerateExtensionOption
+    public enum GenerateHelperOption
     {
         IgnoreEnumWithoutDescription = 1,
         ThrowForEnumWithoutDescription = 2,
@@ -62,7 +62,7 @@ using System.ComponentModel;
 
 namespace SourceGeneratorTest.Console
 {
-    [GenerateHelper(GenerateExtensionOption.IgnoreEnumWithoutDescription)]
+    [GenerateHelper(GenerateHelperOption.IgnoreEnumWithoutDescription)]
     public enum PaymentMethodIgnore
     {
         [Description(""Cartão de crédito"")]
@@ -121,7 +121,7 @@ using System.ComponentModel;
 
 namespace SourceGeneratorTest.Console
 {
-    [GenerateHelper(GenerateExtensionOption.ThrowForEnumWithoutDescription)]
+    [GenerateHelper(GenerateHelperOption.ThrowForEnumWithoutDescription)]
     public enum PaymentMethodThrow
     {
         [Description(""Cartão de crédito"")]
@@ -183,7 +183,7 @@ using System.ComponentModel;
 
 namespace SourceGeneratorTest.Console
 {
-    [GenerateHelper(GenerateExtensionOption.UseItselfWhenNoDescription)]
+    [GenerateHelper(GenerateHelperOption.UseItselfWhenNoDescription)]
     public enum PaymentMethodUseItself
     {
         [Description(""Cartão de crédito"")]
