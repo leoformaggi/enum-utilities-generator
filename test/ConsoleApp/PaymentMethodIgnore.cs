@@ -3,18 +3,15 @@ using System.ComponentModel;
 
 namespace SourceGeneratorTest.Console
 {
-    [GenerateHelper(GenerateExtensionOption.IgnoreEnumWithoutDescription)]
+    [GenerateHelper(GenerateHelperOption.IgnoreEnumWithoutDescription)]
     public enum PaymentMethodIgnore
     {
-        [Description("Cartão de crédito")]
+        [Description("Credit card")]
         Credit,
-        [Description("Pix")]
-        Pix,
 
-        [Description]
+        [Description("Debit card")]
         Debit,
 
-        Boleto,
-        Dinheiro
+        Cash
     }
 }
