@@ -26,4 +26,29 @@ public enum PaymentMethod
 }
 ```
 
-That is enough to generate a helper class with 2 methods with compile-time mapping, for each enum found in the consuming project.
+That is enough to generate a helper class with 2 methods with compile-time mapping, for each enum found in the consuming project:
+
+```csharp
+public static class PaymentMethodHelper
+{
+    public static string GetDescriptionFast(this PaymentMethod @enum)
+    {
+        return @enum switch
+        {
+            PaymentMethodUseItself.Credit => "Credit card",
+            PaymentMethodUseItself.Debit => "Debit card",
+            PaymentMethodUseItself.Cash => "Cash"
+        };
+    }
+
+    public static PaymentMethod? GetEnumFromDescriptionFast(string description)
+    {
+        return description.ToLower() switch
+        {
+            "credit card" => PaymentMethodUseItself.Credit,
+            "debit card" => PaymentMethodUseItself.Debit,
+            "cash" => PaymentMethodUseItself.Cash
+        };
+    }
+}
+```
