@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -15,7 +15,9 @@
 		<RepositoryUrl>https://github.com/leoformaggi/enum-utilities-generator.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>source generator</PackageTags>
-		<Version>0.1.0</Version>
+		<Version>0.1.1</Version>
+		<IsPackable>true</IsPackable>
+		<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
@@ -25,6 +27,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.9.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0" />
 	</ItemGroup>
 </Project>
