@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -72,7 +71,7 @@ namespace EnumUtilitiesGenerator
 
         private static string GenerateGetDescriptionFastMethod(string enumType, ISymbol[] membersSymbols, GenerateExtensionOption option)
         {
-            HashSet<string> switches = new();
+            SwitchesBuilder builder = new("{0} => {1}");
             foreach (var item in membersSymbols)
             {
                 AttributeData? descriptionAttribute = item.GetAttributes().FirstOrDefault(at => at.AttributeClass!.ToString() == "System.ComponentModel.DescriptionAttribute");
@@ -94,18 +93,18 @@ namespace EnumUtilitiesGenerator
                     (not null, _) => ($"{enumType}.{item.Name}", Quote(getAttrValue()))
                 };
 
-                switches.Add($"{enumValue} => {description}");
+                builder.Add(enumValue, description);
             }
 
-            List<string> switchesList = MoveDefaultToLast(switches);
-
-            var switchesBody = string.Join($",\r\n{Indent(4)}", switchesList);
+            var switchesBody = builder.Build(Indent(4));
 
             const string methodTemplate = @"        public static string GetDescriptionFast(this {enumType} @enum)
         {
+#pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
             return @enum switch
+#pragma warning restore CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
             {
-                {switchTemplate}
+{switchTemplate}
             };
         }";
 
@@ -116,59 +115,46 @@ namespace EnumUtilitiesGenerator
 
         private static string GenerateGetEnumFromDescriptionFastMethod(string enumType, ISymbol[] membersSymbols, GenerateExtensionOption option)
         {
-            HashSet<string> switches = new();
+            SwitchesBuilder builder = new("_ when string.Equals({0}, description, StringComparison.InvariantCultureIgnoreCase) => {1}");
+
             foreach (var item in membersSymbols)
             {
                 AttributeData? descriptionAttribute = item.GetAttributes().FirstOrDefault(at => at.AttributeClass!.ToString() == "System.ComponentModel.DescriptionAttribute");
 
-                Func<string> getAttrValue = () => ((string)descriptionAttribute!.ConstructorArguments[0].Value!).ToLower();
+                Func<string> getAttrValue = () => (string)descriptionAttribute!.ConstructorArguments[0].Value!;
                 const string exceptionTemplate = "throw new System.InvalidOperationException($\"Enum for description '{description}' was not found.\")";
 
                 (string description, string value) = (descriptionAttribute, option) switch
                 {
                     (null, GenerateExtensionOption.IgnoreEnumWithoutDescription) => ("_", "null"),
                     (null, GenerateExtensionOption.ThrowForEnumWithoutDescription) => ("_", exceptionTemplate),
-                    (null, GenerateExtensionOption.UseItselfWhenNoDescription) => (Quote(item.Name.ToLower()), $"{enumType}.{item.Name}"),
+                    (null, GenerateExtensionOption.UseItselfWhenNoDescription) => (Quote(item.Name), $"{enumType}.{item.Name}"),
 
                     (not null, GenerateExtensionOption.IgnoreEnumWithoutDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ("_", "null"),
                     (not null, GenerateExtensionOption.ThrowForEnumWithoutDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ("_", exceptionTemplate),
-                    (not null, GenerateExtensionOption.UseItselfWhenNoDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => (Quote(item.Name.ToLower()), $"{enumType}.{item.Name}"),
+                    (not null, GenerateExtensionOption.UseItselfWhenNoDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => (Quote(item.Name), $"{enumType}.{item.Name}"),
 
                     (not null, _) => (Quote(getAttrValue()), $"{enumType}.{item.Name}"),
                 };
 
-                switches.Add($"{description} => {value}");
+                builder.Add(description, value);
             }
 
-            List<string> switchesList = MoveDefaultToLast(switches);
-
-            var switchesBody = string.Join($",\r\n{Indent(4)}", switchesList);
+            var switchesBody = builder.Build(Indent(4));
 
             const string methodTemplate = @"        public static {enumType}? GetEnumFromDescriptionFast(string description)
         {
-            return description.ToLower() switch
+#pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
+            return description switch
+#pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             {
-                {switchTemplate}
+{switchTemplate}
             };
         }";
 
             return methodTemplate
                 .Replace("{enumType}", enumType)
                 .Replace("{switchTemplate}", switchesBody);
-        }
-
-        private static List<string> MoveDefaultToLast(HashSet<string> switches)
-        {
-            List<string> switchesList = switches.ToList();
-            int indexOfDefault = switchesList.FindIndex(x => x.StartsWith("_ =>"));
-            if (indexOfDefault > -1)
-            {
-                string lastMember = switchesList[indexOfDefault];
-                switchesList.RemoveAt(indexOfDefault);
-                switchesList.Add(lastMember);
-            }
-
-            return switchesList;
         }
 
         private static string Quote(string s)
@@ -181,5 +167,4 @@ namespace EnumUtilitiesGenerator
             return new string(' ', 4 * n);
         }
     }
-
 }

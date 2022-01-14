@@ -1,5 +1,4 @@
-﻿using EnumUtilitiesGenerator.Attributes;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace SourceGeneratorTest.Console
 {
