@@ -29,47 +29,57 @@ namespace EnumUtilitiesGenerator
             if (receiver == null || !receiver.EnumsToGenerate.Any())
                 return;
 
-            foreach (var @enum in receiver.EnumsToGenerate)
+            try
             {
-                var semanticModel = context.Compilation.GetSemanticModel(@enum.SyntaxTree);
-                if (semanticModel == null)
-                    continue;
+                foreach (var @enum in receiver.EnumsToGenerate)
+                {
+                    var semanticModel = context.Compilation.GetSemanticModel(@enum.SyntaxTree);
+                    if (semanticModel == null)
+                        continue;
 
-                ISymbol? symbol = semanticModel.GetDeclaredSymbol(@enum);
-                if (symbol == null)
-                    return;
+                    ISymbol? symbol = semanticModel.GetDeclaredSymbol(@enum);
+                    if (symbol == null)
+                        return;
 
-                AttributeData? generateAttribute = symbol.GetAttributes()
-                    .FirstOrDefault(at => at.AttributeClass!.ToString() == Constants.GENERATEHELPER_FULL_NAME);
+                    AttributeData? generateAttribute = symbol.GetAttributes()
+                        .FirstOrDefault(at => at.AttributeClass?.Name == Constants.GENERATEHELPER_FULL_NAME || at.AttributeClass?.Name == Constants.GENERATEHELPER_NAME);
 
-                if (generateAttribute is null)
-                    continue;
+                    if (generateAttribute is null || generateAttribute.ConstructorArguments.IsEmpty)
+                        continue;
 
-                var args = generateAttribute.ConstructorArguments[0];
-                var generationBehavior = (GenerateExtensionOption)(int)args.Value!;
+                    var args = generateAttribute.ConstructorArguments[0];
+                    var generationBehavior = (GenerateExtensionOption)(int)args.Value!;
 
-                ISymbol[] membersSymbols = new ISymbol[@enum.Members.Count];
-                for (int i = 0; i < @enum.Members.Count; i++)
-                    membersSymbols[i] = semanticModel.GetDeclaredSymbol(@enum.Members[i])!;
+                    ISymbol[] membersSymbols = new ISymbol[@enum.Members.Count];
+                    for (int i = 0; i < @enum.Members.Count; i++)
+                        membersSymbols[i] = semanticModel.GetDeclaredSymbol(@enum.Members[i])!;
 
-                string generatedMethod1 = GenerateGetDescriptionFastMethod(symbol.Name, membersSymbols, generationBehavior);
-                string generatedMethod2 = GenerateGetEnumFromDescriptionFastMethod(symbol.Name, membersSymbols, generationBehavior);
+                    StringBuilder methodSB = new();
 
-                string methodsGenerated = generatedMethod1 + "\r\n\r\n" + generatedMethod2;
+                    GenerateGetDescriptionFastMethod(methodSB, membersSymbols, generationBehavior);
+                    GenerateGetEnumFromDescriptionFastMethod(methodSB, membersSymbols, generationBehavior);
+                    methodSB.Replace("{enumType}", symbol.Name);
 
-                string generatedClass = Constants.CLASS_TEMPLATE
-                    .Replace("{enumName}", symbol.Name)
-                    .Replace("{methodTemplate}", methodsGenerated);
+                    string methodsGenerated = methodSB.ToString();
 
-                string source = Constants.NAMESPACE_TEMPLATE
-                    .Replace("{namespaceValue}", symbol.ContainingNamespace.ToDisplayString())
-                    .Replace("{classTemplate}", generatedClass);
+                    string generatedClass = Constants.CLASS_TEMPLATE
+                        .Replace("{enumName}", symbol.Name)
+                        .Replace("{methodTemplate}", methodsGenerated);
 
-                context.AddSource($"{symbol.Name}Helper.g.cs", SourceText.From(source, Encoding.UTF8));
+                    string source = Constants.NAMESPACE_TEMPLATE
+                        .Replace("{namespaceValue}", symbol.ContainingNamespace.ToDisplayString())
+                        .Replace("{classTemplate}", generatedClass);
+
+                    context.AddSource($"{symbol.Name}Helper.g.cs", SourceText.From(source, Encoding.UTF8));
+                }
+            }
+            catch (Exception)
+            {
+                // do not generate
             }
         }
 
-        private static string GenerateGetDescriptionFastMethod(string enumType, ISymbol[] membersSymbols, GenerateExtensionOption option)
+        private static void GenerateGetDescriptionFastMethod(StringBuilder methodBuilder, ISymbol[] membersSymbols, GenerateExtensionOption option)
         {
             SwitchesBuilder builder = new("{0} => {1}");
             foreach (var item in membersSymbols)
@@ -83,14 +93,14 @@ namespace EnumUtilitiesGenerator
                 (string enumValue, string description) = (descriptionAttribute, option) switch
                 {
                     (null, GenerateExtensionOption.IgnoreEnumWithoutDescription) => ("_", "null"),
-                    (null, GenerateExtensionOption.ThrowForEnumWithoutDescription) => ($"{enumType}.{item.Name}", exceptionTemplate),
-                    (null, GenerateExtensionOption.UseItselfWhenNoDescription) => ($"{enumType}.{item.Name}", Quote(item.Name)),
+                    (null, GenerateExtensionOption.ThrowForEnumWithoutDescription) => ($"{{enumType}}.{item.Name}", exceptionTemplate),
+                    (null, GenerateExtensionOption.UseItselfWhenNoDescription) => ($"{{enumType}}.{item.Name}", Quote(item.Name)),
 
                     (not null, GenerateExtensionOption.IgnoreEnumWithoutDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ("_", "null"),
-                    (not null, GenerateExtensionOption.ThrowForEnumWithoutDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ($"{enumType}.{item.Name}", exceptionTemplate),
-                    (not null, GenerateExtensionOption.UseItselfWhenNoDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ($"{enumType}.{item.Name}", Quote(item.Name)),
+                    (not null, GenerateExtensionOption.ThrowForEnumWithoutDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ($"{{enumType}}.{item.Name}", exceptionTemplate),
+                    (not null, GenerateExtensionOption.UseItselfWhenNoDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ($"{{enumType}}.{item.Name}", Quote(item.Name)),
 
-                    (not null, _) => ($"{enumType}.{item.Name}", Quote(getAttrValue()))
+                    (not null, _) => ($"{{enumType}}.{item.Name}", Quote(getAttrValue()))
                 };
 
                 builder.Add(enumValue, description);
@@ -108,12 +118,10 @@ namespace EnumUtilitiesGenerator
             };
         }";
 
-            return methodTemplate
-                .Replace("{enumType}", enumType)
-                .Replace("{switchTemplate}", switchesBody);
+            methodBuilder.AppendLine(methodTemplate.Replace("{switchTemplate}", switchesBody));
         }
 
-        private static string GenerateGetEnumFromDescriptionFastMethod(string enumType, ISymbol[] membersSymbols, GenerateExtensionOption option)
+        private static void GenerateGetEnumFromDescriptionFastMethod(StringBuilder methodBuilder, ISymbol[] membersSymbols, GenerateExtensionOption option)
         {
             SwitchesBuilder builder = new("_ when string.Equals({0}, description, StringComparison.InvariantCultureIgnoreCase) => {1}");
 
@@ -128,13 +136,13 @@ namespace EnumUtilitiesGenerator
                 {
                     (null, GenerateExtensionOption.IgnoreEnumWithoutDescription) => ("_", "null"),
                     (null, GenerateExtensionOption.ThrowForEnumWithoutDescription) => ("_", exceptionTemplate),
-                    (null, GenerateExtensionOption.UseItselfWhenNoDescription) => (Quote(item.Name), $"{enumType}.{item.Name}"),
+                    (null, GenerateExtensionOption.UseItselfWhenNoDescription) => (Quote(item.Name), $"{{enumType}}.{item.Name}"),
 
                     (not null, GenerateExtensionOption.IgnoreEnumWithoutDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ("_", "null"),
                     (not null, GenerateExtensionOption.ThrowForEnumWithoutDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => ("_", exceptionTemplate),
-                    (not null, GenerateExtensionOption.UseItselfWhenNoDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => (Quote(item.Name), $"{enumType}.{item.Name}"),
+                    (not null, GenerateExtensionOption.UseItselfWhenNoDescription) when descriptionAttribute.ConstructorArguments.Length == 0 => (Quote(item.Name), $"{{enumType}}.{item.Name}"),
 
-                    (not null, _) => (Quote(getAttrValue()), $"{enumType}.{item.Name}"),
+                    (not null, _) => (Quote(getAttrValue()), $"{{enumType}}.{item.Name}"),
                 };
 
                 builder.Add(description, value);
@@ -152,9 +160,7 @@ namespace EnumUtilitiesGenerator
             };
         }";
 
-            return methodTemplate
-                .Replace("{enumType}", enumType)
-                .Replace("{switchTemplate}", switchesBody);
+            methodBuilder.AppendLine(methodTemplate.Replace("{switchTemplate}", switchesBody));
         }
 
         private static string Quote(string s)

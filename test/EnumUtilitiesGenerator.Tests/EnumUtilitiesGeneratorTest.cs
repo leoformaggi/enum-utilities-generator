@@ -39,10 +39,26 @@ public sealed class GenerateHelperAttribute : Attribute
     public GenerateHelperOption GenerationOption { get; }
 }
 
+/// <summary>
+/// Define the behaviour of the generated Helper class. All members with a not empty <see cref=""System.ComponentModel.DescriptionAttribute""/> 
+/// will be mapped 1:1 as long as each member has an unique description. Each option will treat members without a valid 
+/// <see cref=""System.ComponentModel.DescriptionAttribute""/> differently.
+/// </summary>
 public enum GenerateHelperOption
 {
+    /// <summary>
+    /// Members without description will return null.
+    /// </summary>
     IgnoreEnumWithoutDescription = 1,
+
+    /// <summary>
+    /// Members without description will throw an exception when requested.
+    /// </summary>
     ThrowForEnumWithoutDescription = 2,
+
+    /// <summary>
+    /// Members without description will be mapped as themselves, equivalent to using nameof() or .ToString().
+    /// </summary>
     UseItselfWhenNoDescription = 3
 }";
             
@@ -95,7 +111,6 @@ namespace SourceGeneratorTest.Console
                 _ => null
             };
         }
-
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
@@ -107,6 +122,7 @@ namespace SourceGeneratorTest.Console
                 _ => null
             };
         }
+
     }
 }";
             extensionCode.ShouldBe(expectedGeneratedHelper);
@@ -160,7 +176,6 @@ namespace SourceGeneratorTest.Console
                 PaymentMethod.Dinheiro => throw new System.InvalidOperationException(""Description for member Dinheiro was not found."")
             };
         }
-
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
@@ -172,6 +187,7 @@ namespace SourceGeneratorTest.Console
                 _ => throw new System.InvalidOperationException($""Enum for description '{description}' was not found."")
             };
         }
+
     }
 }";
 
@@ -226,7 +242,6 @@ namespace SourceGeneratorTest.Console
                 PaymentMethod.Dinheiro => ""Dinheiro""
             };
         }
-
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
@@ -240,6 +255,7 @@ namespace SourceGeneratorTest.Console
                 _ when string.Equals(""Dinheiro"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Dinheiro
             };
         }
+
     }
 }";
 
@@ -294,7 +310,6 @@ namespace SourceGeneratorTest.Console
                 PaymentMethod.Dinheiro => ""Dinheiro""
             };
         }
-
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
@@ -307,6 +322,7 @@ namespace SourceGeneratorTest.Console
                 _ when string.Equals(""Dinheiro"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Dinheiro
             };
         }
+
     }
 }";
 
@@ -361,7 +377,6 @@ namespace SourceGeneratorTest.Console
                 PaymentMethod.Dinheiro => throw new System.InvalidOperationException(""Description for member Dinheiro was not found."")
             };
         }
-
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
@@ -373,6 +388,7 @@ namespace SourceGeneratorTest.Console
                 _ => throw new System.InvalidOperationException($""Enum for description '{description}' was not found."")
             };
         }
+
     }
 }";
 
@@ -426,7 +442,6 @@ namespace SourceGeneratorTest.Console
                 _ => null
             };
         }
-
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
@@ -438,6 +453,7 @@ namespace SourceGeneratorTest.Console
                 _ => null
             };
         }
+
     }
 }";
 

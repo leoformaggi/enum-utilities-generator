@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnumUtilitiesGenerator", "src\EnumUtilitiesGenerator\EnumUtilitiesGenerator.csproj", "{5639093D-3D96-465D-8659-D37357B82149}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnumUtilitiesGenerator", "src\EnumUtilitiesGenerator\EnumUtilitiesGenerator.csproj", "{5639093D-3D96-465D-8659-D37357B82149}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DAB25D9D-D3EB-403D-947E-720ACCE1F382}"
 EndProject
@@ -11,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E627CD19-2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnumUtilitiesGenerator.Tests", "test\EnumUtilitiesGenerator.Tests\EnumUtilitiesGenerator.Tests.csproj", "{D64E1BC2-6F92-451A-A8EA-4CDC0EC13B03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "test\ConsoleApp\ConsoleApp.csproj", "{55C4CF12-A6C9-413E-8051-83B36ED2F8A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "test\ConsoleApp\ConsoleApp.csproj", "{55C4CF12-A6C9-413E-8051-83B36ED2F8A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmark", "test\Benchmark\Benchmark.csproj", "{F60CD395-AB9A-469D-90BF-808B17F97244}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{55C4CF12-A6C9-413E-8051-83B36ED2F8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55C4CF12-A6C9-413E-8051-83B36ED2F8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55C4CF12-A6C9-413E-8051-83B36ED2F8A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F60CD395-AB9A-469D-90BF-808B17F97244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F60CD395-AB9A-469D-90BF-808B17F97244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F60CD395-AB9A-469D-90BF-808B17F97244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F60CD395-AB9A-469D-90BF-808B17F97244}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 		{5639093D-3D96-465D-8659-D37357B82149} = {DAB25D9D-D3EB-403D-947E-720ACCE1F382}
 		{D64E1BC2-6F92-451A-A8EA-4CDC0EC13B03} = {E627CD19-21E9-48FD-82AD-4E99AD9B6C11}
 		{55C4CF12-A6C9-413E-8051-83B36ED2F8A2} = {E627CD19-21E9-48FD-82AD-4E99AD9B6C11}
+		{F60CD395-AB9A-469D-90BF-808B17F97244} = {E627CD19-21E9-48FD-82AD-4E99AD9B6C11}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {735D1D66-C0C4-4C6A-A6A2-128FB01A3184}

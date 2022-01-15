@@ -15,7 +15,7 @@
 		<RepositoryUrl>https://github.com/leoformaggi/enum-utilities-generator.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>source generator</PackageTags>
-		<Version>0.1.2</Version>
+		<Version>0.1.4</Version>
 		<IsPackable>true</IsPackable>
 		<SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
 	</PropertyGroup>
