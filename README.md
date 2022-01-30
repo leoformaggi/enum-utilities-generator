@@ -6,7 +6,7 @@ A source generator for C# that uses Roslyn to create a small helper class for yo
 
 Install the generator via nuget:
 
-`Install-Package EnumUtilitiesGenerator -Version 0.1.4`
+`Install-Package EnumUtilitiesGenerator -Version 0.1.5`
 
 # Benchmark
 
