@@ -8,57 +8,49 @@ namespace Benchmark
         [Benchmark]
         public string ToString_Native_With_5_Members()
         {
-            FewMembersEnum sorteado = FewMembersEnum.Test05;
-            return sorteado.ToString();
+            return FewMembersEnum.Test05.ToString();
         }
 
         [Benchmark]
         public string ToString_Native_With_100_Members()
         {
-            ManyMembersEnum sorteado = ManyMembersEnum.Test75;
-            return sorteado.ToString();
+            return ManyMembersEnum.Test75.ToString();
         }
 
         [Benchmark]
         public string GetDesriptionFast_Generated_With_5_Members()
         {
-            FewMembersEnum sorteado = FewMembersEnum.Test05;
-            return sorteado.GetDescriptionFast();
+            return FewMembersEnum.Test05.GetDescriptionFast();
         }
 
         [Benchmark]
         public string GetDesriptionFast_Generated_With_100_Members()
         {
-            ManyMembersEnum sorteado = ManyMembersEnum.Test75;
-            return sorteado.GetDescriptionFast();
+            return ManyMembersEnum.Test75.GetDescriptionFast();
         }
 
         [Benchmark]
         public string GetDesriptionFromEnum_Reflection_With_5_Members()
         {
-            FewMembersEnum sorteado = FewMembersEnum.Test05;
-            return EnumUtils.GetDescriptionFromEnum(sorteado);
+            return EnumUtils.GetDescriptionFromEnum(FewMembersEnum.Test05);
         }
 
         [Benchmark]
         public string GetDesriptionFromEnum_Reflection_With_100_Members()
         {
-            ManyMembersEnum sorteado = ManyMembersEnum.Test75;
-            return EnumUtils.GetDescriptionFromEnum(sorteado);
+            return EnumUtils.GetDescriptionFromEnum(ManyMembersEnum.Test75);
         }
 
         [Benchmark]
         public string GetDesriptionFromEnum_Generator_With_5_Members()
         {
-            FewMembersEnum sorteado = FewMembersEnum.Test05;
-            return sorteado.GetDescriptionFast();
+            return FewMembersEnum.Test05.GetDescriptionFast();
         }
 
         [Benchmark]
         public string GetDesriptionFromEnum_Generator_With_100_Members()
         {
-            ManyMembersEnum sorteado = ManyMembersEnum.Test75;
-            return sorteado.GetDescriptionFast();
+            return ManyMembersEnum.Test75.GetDescriptionFast();
         }
 
         [Benchmark]

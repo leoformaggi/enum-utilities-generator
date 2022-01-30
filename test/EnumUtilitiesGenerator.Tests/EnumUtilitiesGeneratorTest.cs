@@ -100,6 +100,21 @@ namespace SourceGeneratorTest.Console
 {
     public static class PaymentMethodHelper
     {
+        private static readonly string[] _descriptions = new string[]
+        {
+            ""Cartão de crédito"",
+            ""Pix"",
+        };
+
+        /// <summary>
+        /// Get an array of all the descriptions available. Members without or with empty <see cref=""System.ComponentModel.DescriptionAttribute""/>
+        /// will not be included, not even as themselves.
+        /// </summary>
+        public static string[] GetAvailableDescriptions()
+        {
+            return _descriptions;
+        }
+
         public static string GetDescriptionFast(this PaymentMethod @enum)
         {
 #pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
@@ -111,14 +126,30 @@ namespace SourceGeneratorTest.Console
                 _ => null
             };
         }
+
+        /// <summary>
+        /// Returns the enum that has the given description. Compares using <see cref=""System.StringComparison.InvariantCultureIgnoreCase""/>.
+        /// Returns null if no enum with given description was found.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
+        {
+            return GetEnumFromDescriptionFast(description, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns the enum that has the given description using any <see cref=""System.StringComparison""/>.
+        /// Returns null if no enum with given description was found.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
+        public static PaymentMethod? GetEnumFromDescriptionFast(string description, StringComparison stringComparison)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             return description switch
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             {
-                _ when string.Equals(""Cartão de crédito"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Credit,
-                _ when string.Equals(""Pix"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Pix,
+                _ when string.Equals(""Cartão de crédito"", description, stringComparison) => PaymentMethod.Credit,
+                _ when string.Equals(""Pix"", description, stringComparison) => PaymentMethod.Pix,
                 _ => null
             };
         }
@@ -163,6 +194,21 @@ namespace SourceGeneratorTest.Console
 {
     public static class PaymentMethodHelper
     {
+        private static readonly string[] _descriptions = new string[]
+        {
+            ""Cartão de crédito"",
+            ""Pix"",
+        };
+
+        /// <summary>
+        /// Get an array of all the descriptions available. Members without or with empty <see cref=""System.ComponentModel.DescriptionAttribute""/>
+        /// will not be included, not even as themselves.
+        /// </summary>
+        public static string[] GetAvailableDescriptions()
+        {
+            return _descriptions;
+        }
+
         public static string GetDescriptionFast(this PaymentMethod @enum)
         {
 #pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
@@ -176,14 +222,30 @@ namespace SourceGeneratorTest.Console
                 PaymentMethod.Dinheiro => throw new System.InvalidOperationException(""Description for member Dinheiro was not found."")
             };
         }
+
+        /// <summary>
+        /// Returns the enum that has the given description. Compares using <see cref=""System.StringComparison.InvariantCultureIgnoreCase""/>.
+        /// Throws <see cref=""System.InvalidOperationException""/> if no enum with given description was found.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
+        {
+            return GetEnumFromDescriptionFast(description, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns the enum that has the given description using any <see cref=""System.StringComparison""/>.
+        /// Throws <see cref=""System.InvalidOperationException""/> if no enum with given description was found.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
+        public static PaymentMethod? GetEnumFromDescriptionFast(string description, StringComparison stringComparison)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             return description switch
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             {
-                _ when string.Equals(""Cartão de crédito"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Credit,
-                _ when string.Equals(""Pix"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Pix,
+                _ when string.Equals(""Cartão de crédito"", description, stringComparison) => PaymentMethod.Credit,
+                _ when string.Equals(""Pix"", description, stringComparison) => PaymentMethod.Pix,
                 _ => throw new System.InvalidOperationException($""Enum for description '{description}' was not found."")
             };
         }
@@ -229,6 +291,21 @@ namespace SourceGeneratorTest.Console
 {
     public static class PaymentMethodHelper
     {
+        private static readonly string[] _descriptions = new string[]
+        {
+            ""Cartão de crédito"",
+            ""Pix"",
+        };
+
+        /// <summary>
+        /// Get an array of all the descriptions available. Members without or with empty <see cref=""System.ComponentModel.DescriptionAttribute""/>
+        /// will not be included, not even as themselves.
+        /// </summary>
+        public static string[] GetAvailableDescriptions()
+        {
+            return _descriptions;
+        }
+
         public static string GetDescriptionFast(this PaymentMethod @enum)
         {
 #pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
@@ -237,22 +314,36 @@ namespace SourceGeneratorTest.Console
             {
                 PaymentMethod.Credit => ""Cartão de crédito"",
                 PaymentMethod.Pix => ""Pix"",
-                PaymentMethod.Debit => ""Debit"",
-                PaymentMethod.Boleto => ""Boleto"",
-                PaymentMethod.Dinheiro => ""Dinheiro""
+                PaymentMethod.Debit => nameof(PaymentMethod.Debit),
+                PaymentMethod.Boleto => nameof(PaymentMethod.Boleto),
+                PaymentMethod.Dinheiro => nameof(PaymentMethod.Dinheiro)
             };
         }
+
+        /// <summary>
+        /// Returns the enum that has the given description. Compares using <see cref=""System.StringComparison.InvariantCultureIgnoreCase""/>.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
+        {
+            return GetEnumFromDescriptionFast(description, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns the enum that has the given description using any <see cref=""System.StringComparison""/>.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
+        public static PaymentMethod? GetEnumFromDescriptionFast(string description, StringComparison stringComparison)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             return description switch
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             {
-                _ when string.Equals(""Cartão de crédito"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Credit,
-                _ when string.Equals(""Pix"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Pix,
-                _ when string.Equals(""Debit"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Debit,
-                _ when string.Equals(""Boleto"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Boleto,
-                _ when string.Equals(""Dinheiro"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Dinheiro
+                _ when string.Equals(""Cartão de crédito"", description, stringComparison) => PaymentMethod.Credit,
+                _ when string.Equals(""Pix"", description, stringComparison) => PaymentMethod.Pix,
+                _ when string.Equals(""Debit"", description, stringComparison) => PaymentMethod.Debit,
+                _ when string.Equals(""Boleto"", description, stringComparison) => PaymentMethod.Boleto,
+                _ when string.Equals(""Dinheiro"", description, stringComparison) => PaymentMethod.Dinheiro
             };
         }
 
@@ -297,6 +388,21 @@ namespace SourceGeneratorTest.Console
 {
     public static class PaymentMethodHelper
     {
+        private static readonly string[] _descriptions = new string[]
+        {
+            ""Cartão de crédito"",
+            ""Pix"",
+        };
+
+        /// <summary>
+        /// Get an array of all the descriptions available. Members without or with empty <see cref=""System.ComponentModel.DescriptionAttribute""/>
+        /// will not be included, not even as themselves.
+        /// </summary>
+        public static string[] GetAvailableDescriptions()
+        {
+            return _descriptions;
+        }
+
         public static string GetDescriptionFast(this PaymentMethod @enum)
         {
 #pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
@@ -306,20 +412,34 @@ namespace SourceGeneratorTest.Console
                 PaymentMethod.Credit => ""Cartão de crédito"",
                 PaymentMethod.Pix => ""Pix"",
                 PaymentMethod.Debit => ""Cartão de crédito"",
-                PaymentMethod.Boleto => ""Boleto"",
-                PaymentMethod.Dinheiro => ""Dinheiro""
+                PaymentMethod.Boleto => nameof(PaymentMethod.Boleto),
+                PaymentMethod.Dinheiro => nameof(PaymentMethod.Dinheiro)
             };
         }
+
+        /// <summary>
+        /// Returns the enum that has the given description. Compares using <see cref=""System.StringComparison.InvariantCultureIgnoreCase""/>.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
+        {
+            return GetEnumFromDescriptionFast(description, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns the enum that has the given description using any <see cref=""System.StringComparison""/>.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
+        public static PaymentMethod? GetEnumFromDescriptionFast(string description, StringComparison stringComparison)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             return description switch
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             {
-                _ when string.Equals(""Cartão de crédito"", description, StringComparison.InvariantCultureIgnoreCase) => throw new System.InvalidOperationException($""Multiple members were found with description '{description}'. Could not map description.""),
-                _ when string.Equals(""Pix"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Pix,
-                _ when string.Equals(""Boleto"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Boleto,
-                _ when string.Equals(""Dinheiro"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Dinheiro
+                _ when string.Equals(""Cartão de crédito"", description, stringComparison) => throw new System.InvalidOperationException($""Multiple members were found with description '{description}'. Could not map description.""),
+                _ when string.Equals(""Pix"", description, stringComparison) => PaymentMethod.Pix,
+                _ when string.Equals(""Boleto"", description, stringComparison) => PaymentMethod.Boleto,
+                _ when string.Equals(""Dinheiro"", description, stringComparison) => PaymentMethod.Dinheiro
             };
         }
 
@@ -364,6 +484,21 @@ namespace SourceGeneratorTest.Console
 {
     public static class PaymentMethodHelper
     {
+        private static readonly string[] _descriptions = new string[]
+        {
+            ""Cartão de crédito"",
+            ""Pix"",
+        };
+
+        /// <summary>
+        /// Get an array of all the descriptions available. Members without or with empty <see cref=""System.ComponentModel.DescriptionAttribute""/>
+        /// will not be included, not even as themselves.
+        /// </summary>
+        public static string[] GetAvailableDescriptions()
+        {
+            return _descriptions;
+        }
+
         public static string GetDescriptionFast(this PaymentMethod @enum)
         {
 #pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
@@ -377,14 +512,30 @@ namespace SourceGeneratorTest.Console
                 PaymentMethod.Dinheiro => throw new System.InvalidOperationException(""Description for member Dinheiro was not found."")
             };
         }
+
+        /// <summary>
+        /// Returns the enum that has the given description. Compares using <see cref=""System.StringComparison.InvariantCultureIgnoreCase""/>.
+        /// Throws <see cref=""System.InvalidOperationException""/> if no enum with given description was found.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
+        {
+            return GetEnumFromDescriptionFast(description, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns the enum that has the given description using any <see cref=""System.StringComparison""/>.
+        /// Throws <see cref=""System.InvalidOperationException""/> if no enum with given description was found.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
+        public static PaymentMethod? GetEnumFromDescriptionFast(string description, StringComparison stringComparison)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             return description switch
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             {
-                _ when string.Equals(""Cartão de crédito"", description, StringComparison.InvariantCultureIgnoreCase) => throw new System.InvalidOperationException($""Multiple members were found with description '{description}'. Could not map description.""),
-                _ when string.Equals(""Pix"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Pix,
+                _ when string.Equals(""Cartão de crédito"", description, stringComparison) => throw new System.InvalidOperationException($""Multiple members were found with description '{description}'. Could not map description.""),
+                _ when string.Equals(""Pix"", description, stringComparison) => PaymentMethod.Pix,
                 _ => throw new System.InvalidOperationException($""Enum for description '{description}' was not found."")
             };
         }
@@ -430,6 +581,21 @@ namespace SourceGeneratorTest.Console
 {
     public static class PaymentMethodHelper
     {
+        private static readonly string[] _descriptions = new string[]
+        {
+            ""Cartão de crédito"",
+            ""Pix"",
+        };
+
+        /// <summary>
+        /// Get an array of all the descriptions available. Members without or with empty <see cref=""System.ComponentModel.DescriptionAttribute""/>
+        /// will not be included, not even as themselves.
+        /// </summary>
+        public static string[] GetAvailableDescriptions()
+        {
+            return _descriptions;
+        }
+
         public static string GetDescriptionFast(this PaymentMethod @enum)
         {
 #pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
@@ -442,14 +608,30 @@ namespace SourceGeneratorTest.Console
                 _ => null
             };
         }
+
+        /// <summary>
+        /// Returns the enum that has the given description. Compares using <see cref=""System.StringComparison.InvariantCultureIgnoreCase""/>.
+        /// Returns null if no enum with given description was found.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
         public static PaymentMethod? GetEnumFromDescriptionFast(string description)
+        {
+            return GetEnumFromDescriptionFast(description, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Returns the enum that has the given description using any <see cref=""System.StringComparison""/>.
+        /// Returns null if no enum with given description was found.
+        /// </summary>
+        /// <param name=""description"">The <see cref=""System.ComponentModel.DescriptionAttribute""/> value</param>
+        public static PaymentMethod? GetEnumFromDescriptionFast(string description, StringComparison stringComparison)
         {
 #pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             return description switch
 #pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
             {
-                _ when string.Equals(""Cartão de crédito"", description, StringComparison.InvariantCultureIgnoreCase) => throw new System.InvalidOperationException($""Multiple members were found with description '{description}'. Could not map description.""),
-                _ when string.Equals(""Pix"", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Pix,
+                _ when string.Equals(""Cartão de crédito"", description, stringComparison) => throw new System.InvalidOperationException($""Multiple members were found with description '{description}'. Could not map description.""),
+                _ when string.Equals(""Pix"", description, stringComparison) => PaymentMethod.Pix,
                 _ => null
             };
         }
