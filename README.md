@@ -52,30 +52,62 @@ public enum PaymentMethod
 }
 ```
 
-That will generate a helper class with 2 methods with compile-time mapping, for each enum found in the consuming project with the GenerateHelper attribute.
+That will generate a helper class with 2 methods with compile-time mapping, for each enum found in the consuming project with the GenerateHelper attribute, and an extra method to return all available descriptions.
 
 The generated code:
 
 ```csharp
 public static class PaymentMethodHelper
 {
+    private static readonly string[] _descriptions = new string[]
+    {
+        "Credit card",
+        "Debit card",
+    };
+
+    /// <summary>
+    /// Get an array of all the descriptions available. Members without or with empty <see cref="System.ComponentModel.DescriptionAttribute"/>
+    /// will not be included, not even as themselves.
+    /// </summary>
+    public static string[] GetAvailableDescriptions()
+    {
+        return _descriptions;
+    }
+
     public static string GetDescriptionFast(this PaymentMethod @enum)
     {
+#pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
         return @enum switch
+#pragma warning restore CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
         {
             PaymentMethod.Credit => "Credit card",
             PaymentMethod.Debit => "Debit card",
-            PaymentMethod.Cash => "Cash"
+            PaymentMethod.Cash => nameof(PaymentMethod.Cash)
         };
     }
 
+    /// <summary>
+    /// Returns the enum that has the given description. Compares using <see cref="System.StringComparison.InvariantCultureIgnoreCase"/>.
+    /// </summary>
+    /// <param name="description">The <see cref="System.ComponentModel.DescriptionAttribute"/> value</param>
     public static PaymentMethod? GetEnumFromDescriptionFast(string description)
     {
+        return GetEnumFromDescriptionFast(description, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    /// <summary>
+    /// Returns the enum that has the given description using any <see cref="System.StringComparison"/>.
+    /// </summary>
+    /// <param name="description">The <see cref="System.ComponentModel.DescriptionAttribute"/> value</param>
+    public static PaymentMethod? GetEnumFromDescriptionFast(string description, StringComparison stringComparison)
+    {
+#pragma warning disable CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
         return description switch
+#pragma warning restore CS8509 // The switch expression does not handle all possible values of its input type (it is not exhaustive).
         {
-            _ when string.Equals("Credit card", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Credit,
-            _ when string.Equals("Debit card", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Debit,
-            _ when string.Equals("Cash", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Cash
+            _ when string.Equals("Credit card", description, stringComparison) => PaymentMethod.Credit,
+            _ when string.Equals("Debit card", description, stringComparison) => PaymentMethod.Debit,
+            _ when string.Equals("Cash", description, stringComparison) => PaymentMethod.Cash
         };
     }
 }
