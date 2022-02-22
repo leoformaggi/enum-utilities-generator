@@ -52,7 +52,7 @@ public enum PaymentMethod
 }
 ```
 
-That will generate a helper class with 2 methods with compile-time mapping, for each enum found in the consuming project with the GenerateHelper attribute, and an extra method to retrieve all descriptions available.
+That will generate a helper class with 2 methods with compile-time mapping, for each enum found in the consuming project with the GenerateHelper attribute, and an extra method to return all available descriptions.
 
 The generated code:
 
