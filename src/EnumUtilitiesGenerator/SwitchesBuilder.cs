@@ -8,13 +8,18 @@ namespace EnumUtilitiesGenerator
     {
         private const string DEFAULT_CASE = "_";
         private readonly string _format;
+        private readonly string _defaultCaseFormat;
         private readonly Dictionary<string, (string ReturnValue, bool IsDuplicate)> _switchCases = new(StringComparer.InvariantCultureIgnoreCase);
         private bool _hasDefault;
         private (string Default, string Value) _defaultCase;
 
-        public SwitchesBuilder(string format)
+        public SwitchesBuilder(string format) : this(format, null)
+        { }
+
+        public SwitchesBuilder(string format, string defaultCaseFormat)
         {
             _format = format;
+            _defaultCaseFormat = defaultCaseFormat;
         }
 
         public void Add(string caseValue, string returnValue)
@@ -43,10 +48,13 @@ namespace EnumUtilitiesGenerator
 
         public string Build(string indentation)
         {
-            var switches = _switchCases.Select(x => string.Format($"{indentation}{_format}", x.Key, x.Value.ReturnValue)).ToList();
-
+            var switches = new HashSet<string>(_switchCases.Select(x => string.Format($"{indentation}{_format}", x.Key, x.Value.ReturnValue)));
+            
             if (_hasDefault)
                 switches.Add($"{indentation}{_defaultCase.Default} => {_defaultCase.Value}");
+
+            if (_defaultCaseFormat is not null)
+                switches.Add($"{indentation}{_defaultCaseFormat}");
 
             return string.Join(",\r\n", switches);
         }

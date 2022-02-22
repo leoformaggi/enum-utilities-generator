@@ -6,7 +6,7 @@ A source generator for C# that uses Roslyn to create a small helper class for yo
 
 Install the generator via nuget:
 
-`Install-Package EnumUtilitiesGenerator -Version 0.1.4`
+`Install-Package EnumUtilitiesGenerator -Version 0.1.6`
 
 # Benchmark
 
@@ -52,30 +52,47 @@ public enum PaymentMethod
 }
 ```
 
-That will generate a helper class with 2 methods with compile-time mapping, for each enum found in the consuming project with the GenerateHelper attribute.
+That will generate a helper class with 2 methods with compile-time mapping, for each enum found in the consuming project with the GenerateHelper attribute, and an extra method to retrieve all descriptions available.
 
 The generated code:
 
 ```csharp
 public static class PaymentMethodHelper
 {
+    private static readonly string[] _descriptions = new string[]
+    {
+        "Credit card",
+        "Debit card",
+    };
+
+    public static string[] GetAvailableDescriptions()
+    {
+        return _descriptions;
+    }
+
     public static string GetDescriptionFast(this PaymentMethod @enum)
     {
         return @enum switch
         {
             PaymentMethod.Credit => "Credit card",
             PaymentMethod.Debit => "Debit card",
-            PaymentMethod.Cash => "Cash"
+            PaymentMethod.Cash => nameof(PaymentMethod.Cash)
         };
     }
 
     public static PaymentMethod? GetEnumFromDescriptionFast(string description)
     {
+        return GetEnumFromDescriptionFast(description, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    public static PaymentMethod? GetEnumFromDescriptionFast(string description, StringComparison stringComparison)
+    {
         return description switch
         {
-            _ when string.Equals("Credit card", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Credit,
-            _ when string.Equals("Debit card", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Debit,
-            _ when string.Equals("Cash", description, StringComparison.InvariantCultureIgnoreCase) => PaymentMethod.Cash
+            _ when string.Equals("Credit card", description, stringComparison) => PaymentMethod.Credit,
+            _ when string.Equals("Debit card", description, stringComparison) => PaymentMethod.Debit,
+            _ when string.Equals("Cash", description, stringComparison) => PaymentMethod.Cash,
+            _ => null
         };
     }
 }

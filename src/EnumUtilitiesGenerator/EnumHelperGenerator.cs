@@ -83,7 +83,15 @@ namespace EnumUtilitiesGenerator
         {
             var descList = new HashSet<string>();
             var getDescFastBodyBuilder = new SwitchesBuilder("{0} => {1}");
-            var getEnumFromDescFastBodyBuilder = new SwitchesBuilder("_ when string.Equals({0}, description, stringComparison) => {1}");
+
+            const string switchFormat = "_ when string.Equals({0}, description, stringComparison) => {1}";
+            SwitchesBuilder getEnumFromDescFastBodyBuilder = option switch
+            {
+                GenerateExtensionOption.UseItselfWhenNoDescription => new SwitchesBuilder(switchFormat, "_ => null"),
+                GenerateExtensionOption.IgnoreEnumWithoutDescription => new SwitchesBuilder(switchFormat, "_ => null"),
+                GenerateExtensionOption.ThrowForEnumWithoutDescription => new SwitchesBuilder(switchFormat, "_ => throw new System.InvalidOperationException($\"Enum for description '{description}' was not found.\")"),
+            };
+
             foreach (var item in membersSymbols)
             {
                 AttributeData? descriptionAttribute = item.GetAttributes().FirstOrDefault(at => at.AttributeClass!.ToString() == "System.ComponentModel.DescriptionAttribute");
